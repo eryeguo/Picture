@@ -14,9 +14,8 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.luck.picture.lib.PictureVideoPlayActivity;
 import com.luck.picture.lib.R;
 import com.luck.picture.lib.config.PictureConfig;
@@ -105,25 +104,20 @@ public class SimpleFragmentAdapter extends PagerAdapter {
             longImg.setVisibility(eqLongImg && !isGif ? View.VISIBLE : View.GONE);
             // 压缩过的gif就不是gif了
             if (isGif && !media.isCompressed()) {
-                RequestOptions gifOptions = new RequestOptions()
-                        .override(480, 800)
-                        .priority(Priority.HIGH)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE);
-                Glide.with(contentView.getContext())
-                        .asGif()
-                        .load(path)
-                        .apply(gifOptions)
+
+
+
+                Glide.with(contentView.getContext()).load(path)
+                        .asBitmap().diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(imageView);
+
             } else {
-                RequestOptions options = new RequestOptions()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL);
-                Glide.with(contentView.getContext())
-                        .asBitmap()
-                        .load(path)
-                        .apply(options)
+
+                Glide.with(contentView.getContext()).load(path)
+                        .asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(new SimpleTarget<Bitmap>(480, 800) {
                             @Override
-                            public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                 if (eqLongImg) {
                                     displayLongPic(resource, longImg);
                                 } else {
@@ -131,6 +125,7 @@ public class SimpleFragmentAdapter extends PagerAdapter {
                                 }
                             }
                         });
+
             }
             imageView.setOnViewTapListener(new OnViewTapListener() {
                 @Override
